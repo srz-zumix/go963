@@ -50,9 +50,10 @@ jobs:
       env:
         GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
         COMMAND: ${{ steps.command.outputs.request }}
+      continue-on-error: true
       run: |
         if [ -z "${COMMAND}" ]; then export COMMAND=go963 help; fi
-        ./${COMMAND} > 2>&1 output.txt
+        ./${COMMAND} 2>&1 > output.txt
         log=$(cat output.txt)
         log="${log//$'\n'/\\n}"
         echo $log
