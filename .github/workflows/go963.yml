@@ -1,4 +1,5 @@
 on:
+  pull_request:
   issue_comment:
     types: [created]
 
@@ -24,8 +25,8 @@ jobs:
       uses: docker://srzzumix/go963
       env:
         GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
-      run: |
-        go963 help
+      with:
+        args: help
     - name: go963 success message
       uses: actions/github-script@0.9.0
       if: steps.go963.outputs.exitcode == 0
