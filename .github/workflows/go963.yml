@@ -1,11 +1,12 @@
 on:
-  pull_request:
+  # pull_request:
   issue_comment:
     types: [created]
 
 jobs:
   go963:
     runs-on: ubuntu-18.04
+    if: startsWith(github.event.comment.body, 'go963')
     name: go963
     env:
       GO963_SECRETFILE: ${{ secrets.GO963_SECRETFILE }}
