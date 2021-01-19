@@ -6,21 +6,22 @@ jobs:
   go963:
     runs-on: ubuntu-18.04
     name: go963
-    container:
-      image: docker://srzzumix/go963
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
     env:
       GO963_SECRETFILE: ${{ secrets.GO963_SECRETFILE }}
       GO963_CACHETOKENFILE: ${{ secrets.GO963_CACHETOKENFILE }}
     steps:
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
     - uses: actions/checkout@master
     - name: Decrypt large secret
       run: ./.github/scripts/decrypt_secret.sh
       env:
         LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
     - id: go963
+      uses: docker://srzzumix/go963
       env:
         GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
       run: |
