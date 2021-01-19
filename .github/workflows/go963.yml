@@ -17,16 +17,30 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - uses: actions/checkout@master
+    - name: Set up Go 1.15
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.15
+    - name: Get dependencies
+      run: go get -v -t -d ./...
+    - name: Build
+      run: |
+        make build
     - name: Decrypt large secret
       run: ./.github/scripts/decrypt_secret.sh
       env:
         LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+    # - id: go963
+    #   uses: docker://srzzumix/go963
+    #   env:
+    #     GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
+    #   with:
+    #     args: help
     - id: go963
-      uses: docker://srzzumix/go963
       env:
         GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
-      with:
-        args: help
+      run: |
+        ./go963 help
     - name: dump
       env:
         GO963_STDOUT: "```${{ steps.go963.outputs.stdout }}```"
