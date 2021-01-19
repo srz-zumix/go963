@@ -1,0 +1,36 @@
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  go963:
+    runs-on: ubuntu-18.04
+    name: go963
+    container:
+      image: docker://srzzumix/go963
+      credentials:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@master
+    - name: Decrypt large secret
+      run: ./.github/scripts/decrypt_secret.sh
+      env:
+        LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+    - id: go963
+      run: |
+        go963 help
+    - name: go963 success message
+        uses: actions/github-script@0.9.0
+        if: steps.go963.outputs.exitcode == 0
+        env:
+          STDOUT: "```${{ steps.go963.outputs.stdout }}```"
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "#### `go963` Success\n" + process.env.STDOUT
+            })
