@@ -1,0 +1,29 @@
+on: [pull_request]
+
+jobs:
+  go963:
+    runs-on: ubuntu-18.04
+    name: go963
+    env:
+      GO963_SECRETFILE: ${{ secrets.GO963_SECRETFILE }}
+      GO963_CACHETOKENFILE: ${{ secrets.GO963_CACHETOKENFILE }}
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Go 1.15
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.15
+    - name: Get dependencies
+      run: go get -v -t -d ./...
+    - name: Build
+      run: |
+        make build
+    - name: Decrypt large secret
+      run: ./.github/scripts/decrypt_secret.sh
+      env:
+        LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+    - id: go963
+      env:
+        GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
+      run: |
+        ./go963 listKintai -d 2021-03-09

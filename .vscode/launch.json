@@ -1,0 +1,55 @@
+{
+    // IntelliSense を使用して利用可能な属性を学べます。
+    // 既存の属性の説明をホバーして表示します。
+    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "help",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}"
+        },
+        {
+            "name": "createToken",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}",
+            "args": ["createToken"]
+        },
+        {
+            "name": "setKintai",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}",
+            "args": ["setKintai", "休暇", "私用のため休みます", "-u", "srz_zumix", "-d", "2021-03-09" ]
+        },
+        {
+            "name": "delKintai",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}",
+            "args": ["delKintai", "-u", "srz_zumix", "-d", "2021-03-09", "--allow" ]
+        },
+        {
+            "name": "listKintai",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}",
+            "args": ["listKintai", "-d", "2021-03-09" ]
+        },
+        {
+            "name": "eventJson",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}",
+            "args": ["eventJson" ]
+        }
+    ]
+}
