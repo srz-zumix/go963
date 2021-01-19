@@ -37,7 +37,7 @@ jobs:
     #   with:
     #     args: help
     - id: command
-      if: tartsWith(github.event.comment.body, 'go963')
+      if: startsWith(github.event.comment.body, 'go963')
       run: |
         echo "::set-output name=request::${{ github.event.comment.body }}"
     - id: go963
