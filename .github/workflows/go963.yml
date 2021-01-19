@@ -40,18 +40,23 @@ jobs:
       env:
         GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
       run: |
-        ./go963 help
+        ./go963 help > output.txt
+        log=$(cat output.txt)
+        log="${log//$'\n'/\\n}"
+        echo $log
+        echo "::set-output name=std_out::$log"
+
     - name: dump
       env:
-        GO963_STDOUT: "```${{ steps.go963.outputs.stdout }}```"
+        GO963_STDOUT: "```${{ steps.go963.outputs.std_out }}```"
       run: |
-        echo ${{ steps.go963.outputs.stdout }}
+        echo ${{ steps.go963.outputs.std_out }}
         echo $GO963_STDOUT
     - name: go963 success message
       uses: actions/github-script@0.9.0
       if: steps.go963.outputs.exitcode == 0
       env:
-        GO963_STDOUT: "```${{ steps.go963.outputs.stdout }}```"
+        GO963_STDOUT: "```${{ steps.go963.outputs.std_out }}```"
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
