@@ -1,4 +1,5 @@
 on:
+  pull_request:
   issue_comment:
     types: [created]
 
@@ -6,30 +7,60 @@ jobs:
   go963:
     runs-on: ubuntu-18.04
     name: go963
-    container:
-      image: docker://srzzumix/go963
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
     env:
       GO963_SECRETFILE: ${{ secrets.GO963_SECRETFILE }}
       GO963_CACHETOKENFILE: ${{ secrets.GO963_CACHETOKENFILE }}
     steps:
+    # - name: Login to DockerHub
+    #   uses: docker/login-action@v1
+    #   with:
+    #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+    #     password: ${{ secrets.DOCKERHUB_TOKEN }}
     - uses: actions/checkout@master
+    - name: Set up Go 1.15
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.15
+    - name: Get dependencies
+      run: go get -v -t -d ./...
+    - name: Build
+      run: |
+        make build
     - name: Decrypt large secret
       run: ./.github/scripts/decrypt_secret.sh
       env:
         LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+    # - id: go963
+    #   uses: docker://srzzumix/go963
+    #   env:
+    #     GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
+    #   with:
+    #     args: help
+    - id: command
+      if: startsWith(github.event.comment.body, 'go963')
+      run: |
+        echo "::set-output name=request::${{ github.event.comment.body }}"
     - id: go963
       env:
         GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
+        COMMAND: ${{ steps.command.outputs.request }}
       run: |
-        go963 help
+        if [ -z "${COMMAND}" ]; then export COMMAND=go963 help; fi
+        ./${COMMAND} > output.txt
+        log=$(cat output.txt)
+        log="${log//$'\n'/\\n}"
+        echo $log
+        echo "::set-output name=std_out::$log"
+    # - name: dump
+    #   env:
+    #     GO963_STDOUT: "${{ steps.go963.outputs.std_out }}"
+    #   run: |
+    #     echo $GO963_STDOUT
     - name: go963 success message
       uses: actions/github-script@0.9.0
       if: steps.go963.outputs.exitcode == 0
       env:
-        STDOUT: "```${{ steps.go963.outputs.stdout }}```"
+        GO963_STDOUT: "```${{ steps.go963.outputs.std_out }}```"
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
@@ -37,5 +68,5 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: "#### `go963` Success\n" + process.env.STDOUT
+            body: "#### `go963` Success\n\n----\n" + process.env.GO963_STDOUT.replace(/\\n/g, '\n')
           })
