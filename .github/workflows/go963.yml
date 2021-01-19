@@ -58,9 +58,11 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
+          console.log(process.env.GO963_STDOUT.replace('\\n', '\n'))
+          body = "#### `go963` Success\n\n----\n" + process.env.GO963_STDOUT.replace('\\n', '\n')
           github.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: "#### `go963` Success\n\n----\n" + process.env.GO963_STDOUT.replace('\\n', '\n')
+            body: body
           })
