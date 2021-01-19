@@ -6,12 +6,17 @@ on:
 jobs:
   go963:
     runs-on: ubuntu-18.04
-    if: startsWith(github.event.comment.body, 'go963')
+    if: github.event.comment.author_association == 'OWNER' && startsWith(github.event.comment.body, 'go963')
     name: go963
     env:
       GO963_SECRETFILE: ${{ secrets.GO963_SECRETFILE }}
       GO963_CACHETOKENFILE: ${{ secrets.GO963_CACHETOKENFILE }}
     steps:
+    # - name: $github
+    #   env:
+    #     GITHUB_CONTEXT: ${{ toJson(github) }}
+    #   run: |
+    #     echo "$GITHUB_CONTEXT"
     # - name: Login to DockerHub
     #   uses: docker/login-action@v1
     #   with:
@@ -47,7 +52,7 @@ jobs:
         COMMAND: ${{ steps.command.outputs.request }}
       run: |
         if [ -z "${COMMAND}" ]; then export COMMAND=go963 help; fi
-        ./${COMMAND} > output.txt
+        ./${COMMAND} > 2>&1 output.txt
         log=$(cat output.txt)
         log="${log//$'\n'/\\n}"
         echo $log
@@ -59,7 +64,7 @@ jobs:
     #     echo $GO963_STDOUT
     - name: go963 success message
       uses: actions/github-script@0.9.0
-      if: steps.go963.outputs.exitcode == 0
+      # if: steps.go963.outputs.exitcode == 0
       env:
         GO963_STDOUT: "```${{ steps.go963.outputs.std_out }}```"
       with:
