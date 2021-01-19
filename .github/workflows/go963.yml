@@ -50,7 +50,7 @@ jobs:
       env:
         GO963_STDOUT: "```${{ steps.go963.outputs.std_out }}```"
       run: |
-        echo ${{ steps.go963.outputs.std_out }}
+        echo "${{ steps.go963.outputs.std_out }}"
         echo $GO963_STDOUT
     - name: go963 success message
       uses: actions/github-script@0.9.0
