@@ -11,11 +11,11 @@ jobs:
       GO963_SECRETFILE: ${{ secrets.GO963_SECRETFILE }}
       GO963_CACHETOKENFILE: ${{ secrets.GO963_CACHETOKENFILE }}
     steps:
-    - name: Login to DockerHub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    # - name: Login to DockerHub
+    #   uses: docker/login-action@v1
+    #   with:
+    #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+    #     password: ${{ secrets.DOCKERHUB_TOKEN }}
     - uses: actions/checkout@master
     - name: Set up Go 1.15
       uses: actions/setup-go@v1
@@ -36,11 +36,17 @@ jobs:
     #     GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
     #   with:
     #     args: help
+    - id: command
+      if: tartsWith(github.event.comment.body, 'go963')
+      run: |
+        echo "::set-output name=request::${{ github.event.comment.body }}"
     - id: go963
       env:
         GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
+        COMMAND: ${{ steps.command.outputs.request }}
       run: |
-        ./go963 help > output.txt
+        if [ -z "${COMMAND}" ]; then COMMAND=go963 help; fi
+        ./${COMMAND} > output.txt
         log=$(cat output.txt)
         log="${log//$'\n'/\\n}"
         echo $log
