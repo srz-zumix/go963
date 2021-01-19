@@ -45,7 +45,7 @@ jobs:
         GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
         COMMAND: ${{ steps.command.outputs.request }}
       run: |
-        if [ -z "${COMMAND}" ]; then COMMAND=go963 help; fi
+        if [ -z "${COMMAND}" ]; then export COMMAND=go963 help; fi
         ./${COMMAND} > output.txt
         log=$(cat output.txt)
         log="${log//$'\n'/\\n}"
