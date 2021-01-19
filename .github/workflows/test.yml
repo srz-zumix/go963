@@ -20,5 +20,9 @@ jobs:
       env:
         LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
     - id: go963
+      env:
+        GO963_SECRETFILE: ${{ secrets.GO963_SECRETFILE }}
+        GO963_CALENDARID: ${{ secrets.GO963_CALENDARID }}
+        GO963_CACHETOKENFILE: ${{ secrets.GO963_CACHETOKENFILE }}
       run: |
         ./go963 listKintai -d 2021-03-09
