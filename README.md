@@ -1,5 +1,7 @@
 # go963
 
+[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/srzzumix/go963)](https://hub.docker.com/repository/docker/srzzumix/go963)
+
 勤怠管理用 Google カレンダー・スケジュールツール
 
 ## 想定
