@@ -70,7 +70,7 @@ jobs:
       uses: actions/github-script@0.9.0
       # if: steps.go963.outputs.exitcode == 0
       env:
-        GO963_STDOUT: "```${{ steps.go963log.outputs.std_out }}```"
+        GO963_STDOUT: "${{ steps.go963log.outputs.std_out }}"
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
@@ -78,5 +78,5 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: "#### `go963` Result\n\n----\n" + process.env.GO963_STDOUT.replace(/\\n/g, '\n')
+            body: "#### `go963` Result\n\n----\n\n```\n" + process.env.GO963_STDOUT.replace(/\\n/g, '\n') + "\n```"
           })
