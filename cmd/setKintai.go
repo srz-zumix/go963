@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"time"
-
 	"github.com/spf13/cobra"
 )
 
@@ -36,13 +34,13 @@ var setKintaiCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		now := time.Now()
-		zone, _ := now.Zone()
 
-		d, err := time.ParseInLocation(dateFormat, date, now.Location())
+		d, err := parseDate(date)
 		if err != nil {
 			return err
 		}
+
+		zone, _ := d.Zone()
 		summary := args[0]
 		description := ""
 		if len(args) > 1 {

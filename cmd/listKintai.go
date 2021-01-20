@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -23,9 +22,8 @@ var listKintaiCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		now := time.Now()
 
-		d, err := time.ParseInLocation(dateFormat, date, now.Location())
+		d, err := parseDate(date)
 		if err != nil {
 			return err
 		}
